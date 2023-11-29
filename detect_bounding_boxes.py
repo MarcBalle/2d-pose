@@ -13,7 +13,7 @@ def parse_arguments():
     parser.add_argument('--frames', '-f', type=str, default='', help='Number of frames to analyze')
     parser.add_argument('--config', '-c', type=str, required=True, help='mmdetection model config file')
     parser.add_argument('--checkpoint', '-ckpt', type=str, required=True, help='pth checkpoint file')
-    parser.add_argument('--output', '-o', type=str, default='outputs', help='Output directory')
+    parser.add_argument('--output', '-o', type=str, default='.', help='Output directory')
 
     args = parser.parse_args()
 
@@ -22,11 +22,11 @@ def parse_arguments():
 if __name__ == '__main__':
     args = parse_arguments()
 
-    if not os.path.isdir(args.output):
-        os.mkdir(args.output)
+    if not os.path.isdir(os.path.join(args.output, 'output')):
+        os.mkdir(os.path.join(args.output, 'output'))
 
     # Initialize the DetInferencer
-    inferencer = DetInferencer(model='yolox_x_8x8_300e_coco')
+    inferencer = DetInferencer(model=args.config)
     
     cap = cv2.VideoCapture(args.video)
     fps = cap.get(cv2.CAP_PROP_FPS)
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     
     h, w = img.shape[:2]
     size = (w, h)
-    out = cv2.VideoWriter('bb_output.avi', cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
+    out = cv2.VideoWriter(os.path.join(args.output, 'bb_output.avi'), cv2.VideoWriter_fourcc(*'DIVX'), fps, size)
     out.write(bb_img)
 
     for i in tqdm(range(1, video_length)):
