@@ -3,6 +3,7 @@ import os
 
 import cv2
 from tqdm import tqdm
+import torch
 
 from mmdet.apis import DetInferencer
 
@@ -26,7 +27,8 @@ if __name__ == '__main__':
         os.mkdir(os.path.join(args.output, 'output'))
 
     # Initialize the DetInferencer
-    inferencer = DetInferencer(model=args.config)
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+    inferencer = DetInferencer(model=args.config, device=device)
     
     cap = cv2.VideoCapture(args.video)
     fps = cap.get(cv2.CAP_PROP_FPS)
