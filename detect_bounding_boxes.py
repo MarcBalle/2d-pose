@@ -13,7 +13,7 @@ def parse_arguments():
     parser.add_argument('--video', '-v', type=str, required=True, help='Path to the input video')
     parser.add_argument('--frames', '-f', type=str, default='', help='Number of frames to analyze')
     parser.add_argument('--config', '-c', type=str, required=True, help='mmdetection model config file')
-    parser.add_argument('--checkpoint', '-ckpt', type=str, required=True, help='pth checkpoint file')
+    parser.add_argument('--checkpoint', '-ckpt', type=str, required=False, help='pth checkpoint file')
     parser.add_argument('--output', '-o', type=str, default='.', help='Output directory')
 
     args = parser.parse_args()
