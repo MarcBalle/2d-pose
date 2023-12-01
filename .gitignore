@@ -3,3 +3,4 @@ configs
 videos
 weights
 outputs
+**/__pycache__/

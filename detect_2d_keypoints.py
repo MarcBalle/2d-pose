@@ -7,19 +7,15 @@ import torch
 
 from mmpose.apis import MMPoseInferencer
 
+from utils import skeleton_coco_to_h36m, show2Dpose
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--video", "-v", type=str, required=True, help="Path to the input video"
-    )
-    parser.add_argument(
-        "--frames", "-f", type=str, default=None, help="Number of frames to analyze"
-    )
-    parser.add_argument(
-        "--config_pose", "-cp", type=str, required=True, help="mmpose model config file"
-    )
+    parser.add_argument("--video", "-v", type=str, required=True, help="Path to the input video")
+    parser.add_argument("--frames", "-f", type=str, default=None, help="Number of frames to analyze")
+    parser.add_argument("--config_pose", "-cp", type=str, required=True, help="mmpose model config file")
     parser.add_argument(
         "--config_det",
         "-cd",
@@ -27,12 +23,8 @@ def parse_arguments():
         required=True,
         help="mmdetection model config file",
     )
-    parser.add_argument(
-        "--checkpoint", "-ckpt", type=str, required=False, help="pth checkpoint file"
-    )
-    parser.add_argument(
-        "--output", "-o", type=str, default=".", help="Output directory"
-    )
+    parser.add_argument("--checkpoint", "-ckpt", type=str, required=False, help="pth checkpoint file")
+    parser.add_argument("--output", "-o", type=str, default=".", help="Output directory")
 
     args = parser.parse_args()
 
@@ -57,15 +49,15 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture(args.video)
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    video_length = (
-        int(args.frames) if args.frames else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    )
+    video_length = int(args.frames) if args.frames else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # Read first frame and perform inference
     _, img = cap.read()
     result_generator = inferencer(img, return_vis=True)
     results = next(result_generator)
-    bb_img = results["visualization"][0]
+    keypoints_coco = results["predictions"][0][0]["keypoints"]
+    scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
+    coco_skeleton_image = results["visualization"][0]
 
     h, w = img.shape[:2]
     size = (w, h)
@@ -76,17 +68,22 @@ if __name__ == "__main__":
         fps,
         size,
     )
-    out.write(bb_img)
+    out.write(coco_skeleton_image)
 
     for i in tqdm(range(1, video_length)):
         # Image read in BGR order (required by mmdetections)
         _, img = cap.read()
 
         # Perform inference
-        result_generator = inferencer(img, return_vis=True)
-        results = next(result_generator)
-        bb_img = results["visualization"][0]
-        out.write(bb_img)
+        if i > 500:
+            result_generator = inferencer(img, return_vis=True)
+            results = next(result_generator)
+            coco_skeleton_image = results["visualization"][0]
+            keypoints_coco = results["predictions"][0][0]["keypoints"]
+            scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
+            keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
+            h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
+            out.write(coco_skeleton_image)
 
     cap.release()
     out.release()
