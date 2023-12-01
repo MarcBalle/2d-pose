@@ -58,6 +58,8 @@ if __name__ == "__main__":
     keypoints_coco = results["predictions"][0][0]["keypoints"]
     scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
     coco_skeleton_image = results["visualization"][0]
+    keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
+    h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
 
     h, w = img.shape[:2]
     size = (w, h)
@@ -68,22 +70,21 @@ if __name__ == "__main__":
         fps,
         size,
     )
-    out.write(coco_skeleton_image)
+    out.write(h36m_skeleton_image)
 
     for i in tqdm(range(1, video_length)):
         # Image read in BGR order (required by mmdetections)
         _, img = cap.read()
 
         # Perform inference
-        if i > 500:
-            result_generator = inferencer(img, return_vis=True)
-            results = next(result_generator)
-            coco_skeleton_image = results["visualization"][0]
-            keypoints_coco = results["predictions"][0][0]["keypoints"]
-            scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
-            keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
-            h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
-            out.write(coco_skeleton_image)
+        result_generator = inferencer(img, return_vis=True)
+        results = next(result_generator)
+        coco_skeleton_image = results["visualization"][0]
+        keypoints_coco = results["predictions"][0][0]["keypoints"]
+        scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
+        keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
+        h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
+        out.write(h36m_skeleton_image)
 
     cap.release()
     out.release()
