@@ -42,6 +42,8 @@ def skeleton_coco_to_h36m(keypoints, scores, num_keypoint=17):
 
 
 def show2Dpose(kps, img):
+    if not kps:
+        return img
     connections = [
         [0, 1],
         [1, 2],
