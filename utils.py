@@ -14,7 +14,7 @@ def threshold_keypoints(keypoints, scores, thr=0.3):
         if score < thr:
             if i in core_joints:  # is some core joint is missing, return empty skeleton
                 return None
-            thresholded_keypoints.append([[0.0, 0.0]])
+            thresholded_keypoints.append([0.0, 0.0])
         else:
             thresholded_keypoints.append(kpt)
 
