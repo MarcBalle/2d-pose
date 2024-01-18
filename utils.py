@@ -27,7 +27,7 @@ def skeleton_coco_to_h36m(keypoints, scores, num_keypoint=17):
     """
     keypoints = threshold_keypoints(keypoints, scores, thr=0.3)
     if not keypoints:
-        return keypoints
+        return np.array([])
     joints_index = [-1, 12, 14, 16, 11, 13, 15, -2, -3, 0, -4, 5, 7, 9, 6, 8, 10]
     joint = np.zeros((num_keypoint, 2))
     for j in range(17):
@@ -42,7 +42,7 @@ def skeleton_coco_to_h36m(keypoints, scores, num_keypoint=17):
 
 
 def show2Dpose(kps, img):
-    if not kps:
+    if kps.size == 0:
         return img
     connections = [
         [0, 1],
