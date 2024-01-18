@@ -4,6 +4,7 @@ import os
 import cv2
 from tqdm import tqdm
 import torch
+import numpy as np
 
 from mmpose.apis import MMPoseInferencer
 
@@ -51,6 +52,8 @@ if __name__ == "__main__":
 
     video_length = int(args.frames) if args.frames else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
+    keypoints = np.zeros((video_length, 17, 2))
+
     # Read first frame and perform inference
     _, img = cap.read()
     result_generator = inferencer(img, return_vis=True)
@@ -60,6 +63,8 @@ if __name__ == "__main__":
     coco_skeleton_image = results["visualization"][0]
     keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
     h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
+    if keypoints_h36m.size > 0:
+        keypoints[0] = keypoints_h36m
 
     h, w = img.shape[:2]
     size = (w, h)
@@ -85,6 +90,10 @@ if __name__ == "__main__":
         keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
         h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
         out.write(h36m_skeleton_image)
+        if keypoints_h36m.size > 0:
+            keypoints[i] = keypoints_h36m
+
+    np.savez(os.path.join(args.output, "2d_keypoints.npz"), keypoints=keypoints)
 
     cap.release()
     out.release()
