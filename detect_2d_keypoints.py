@@ -26,6 +26,7 @@ def parse_arguments():
     )
     parser.add_argument("--checkpoint", "-ckpt", type=str, required=False, help="pth checkpoint file")
     parser.add_argument("--output", "-o", type=str, default=".", help="Output directory")
+    parser.add_argument("--output_filename", type=str, required=False, default="keypoints.npz")
 
     args = parser.parse_args()
 
@@ -93,7 +94,7 @@ if __name__ == "__main__":
         if keypoints_h36m.size > 0:
             keypoints[i] = keypoints_h36m
 
-    np.savez(os.path.join(args.output, "2d_keypoints.npz"), keypoints=keypoints)
+    np.savez(os.path.join(args.output, args.output_filename), keypoints=keypoints)
 
     cap.release()
     out.release()
