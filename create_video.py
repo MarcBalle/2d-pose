@@ -5,6 +5,7 @@ import os
 
 import numpy as np
 import cv2
+from tqdm import tqdm
 
 from utils import show2Dpose
 
@@ -28,13 +29,13 @@ if __name__ == "__main__":
     output_dir = os.path.dirname(args.video)
     video_name, video_ext = os.path.splitext(os.path.basename(args.video))
     out = cv2.VideoWriter(
-        filename=os.path.join(output_dir, video_name + ".2dkeypoints" + video_ext),
+        filename=os.path.join(output_dir, video_name + ".2dkeypoints01" + video_ext),
         fourcc=cv2.VideoWriter_fourcc(*"DIVX"),
         fps=fps,
         frameSize=(int(width), int(height)),    
     )
 
-    for i in range(video_length):
+    for i in tqdm(range(video_length)):
         _, img = cap.read()
         keypoints_frame = keypoints[i]
         skeleton_image = show2Dpose(keypoints_frame, img)
