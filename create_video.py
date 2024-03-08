@@ -29,7 +29,7 @@ if __name__ == "__main__":
     output_dir = os.path.dirname(args.video)
     video_name, video_ext = os.path.splitext(os.path.basename(args.video))
     out = cv2.VideoWriter(
-        filename=os.path.join("C:\\Users\\marcw\\master_thesis", video_name + ".2dkeypoints" + video_ext),
+        filename=os.path.join("C:\\Users\\marcw\\master_thesis", video_name + ".2dkeypoints_1euro" + video_ext),
         fourcc=cv2.VideoWriter_fourcc(*"DIVX"),
         fps=fps,
         frameSize=(int(width), int(height)),    
