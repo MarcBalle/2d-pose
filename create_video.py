@@ -24,12 +24,12 @@ if __name__ == "__main__":
     width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH) 
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  
 
-    assert keypoints.shape[0] == video_length, f"Keypoints frames ({keypoints.shpe[0]}) and video frame ({video_length}) do not match."
+    assert keypoints.shape[0] == video_length, f"Keypoints frames ({keypoints.shape[0]}) and video frame ({video_length}) do not match."
 
     output_dir = os.path.dirname(args.video)
     video_name, video_ext = os.path.splitext(os.path.basename(args.video))
     out = cv2.VideoWriter(
-        filename=os.path.join(output_dir, video_name + ".2dkeypoints01" + video_ext),
+        filename=os.path.join("C:\\Users\\marcw\\master_thesis", video_name + ".2dkeypoints" + video_ext),
         fourcc=cv2.VideoWriter_fourcc(*"DIVX"),
         fps=fps,
         frameSize=(int(width), int(height)),    

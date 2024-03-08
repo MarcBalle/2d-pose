@@ -1,5 +1,6 @@
 import argparse
 import math
+import os
 
 import numpy as np 
 from tqdm import tqdm
@@ -29,4 +30,9 @@ if __name__ == "__main__":
         # Left ankle
         keypoints[frame_idx][6] = np.array([left_knee[0] + args.length * math.cos(args.angle), left_knee[1] + args.length * math.sin(args.angle)])
 
-    np.savez("C:\\Users\\marcw\\master_thesis\\ankle-fixed01_run1_2018-05-03-14-08-31.kinect_color.npz", keypoints=keypoints)
+    parent_dir, filename = os.path.split(args.kpts)
+    output_dir = os.path.join(parent_dir, "ankle_fixed")
+    if not os.path.isdir(output_dir):
+       os.makedirs(output_dir)
+
+    np.savez(os.path.join(output_dir, filename), keypoints=keypoints)
