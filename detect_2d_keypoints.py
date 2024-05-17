@@ -78,6 +78,8 @@ if __name__ == "__main__":
     )
     out.write(h36m_skeleton_image)
 
+    print("Performing inference...")
+
     for i in tqdm(range(1, video_length)):
         # Image read in BGR order (required by mmdetections)
         _, img = cap.read()
