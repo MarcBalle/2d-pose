@@ -39,9 +39,6 @@ if __name__ == "__main__":
     assert os.path.isfile(args.video), "Video file not found"
     assert os.path.isdir(args.output), "Output directory not found"
 
-    if not os.path.isdir(os.path.join(args.output, "output")):
-        os.mkdir(os.path.join(args.output, "output"))
-
     # Initialize the DetInferencer
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     inferencer = MMPoseInferencer(

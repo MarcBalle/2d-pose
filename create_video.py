@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--video", type=str, required=True, help="video file path")
     parser.add_argument("--kpts", type=str, required=True, help="keypoints file path")
+    parser.add_argument("--output", type=str, default=".", help="output directory")
 
     args = parser.parse_args()
 
@@ -21,27 +22,28 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture(args.video)
     fps = cap.get(cv2.CAP_PROP_FPS)
     video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    width  = cap.get(cv2.CAP_PROP_FRAME_WIDTH) 
-    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
-    assert keypoints.shape[0] == video_length, f"Keypoints frames ({keypoints.shape[0]}) and video frame ({video_length}) do not match."
+    assert (
+        keypoints.shape[0] == video_length
+    ), f"Keypoints frames ({keypoints.shape[0]}) and video frame ({video_length}) do not match."
 
     output_dir = os.path.dirname(args.video)
     video_name, video_ext = os.path.splitext(os.path.basename(args.video))
     out = cv2.VideoWriter(
-        filename=os.path.join("C:\\Users\\marcw\\master_thesis", video_name + ".2dkeypoints_1euro" + video_ext),
+        filename=os.path.join(args.output, video_name + ".2dkeypoints_1euro" + video_ext),
         fourcc=cv2.VideoWriter_fourcc(*"DIVX"),
         fps=fps,
-        frameSize=(int(width), int(height)),    
+        frameSize=(int(width), int(height)),
     )
 
     for i in tqdm(range(video_length)):
         _, img = cap.read()
         keypoints_frame = keypoints[i]
-        skeleton_image = show2Dpose(keypoints_frame, img)
+        skeleton_image = show2Dpose(img, keypoints_frame)
         out.write(skeleton_image)
-    
+
     cap.release()
     out.release()
     cv2.destroyAllWindows()
-

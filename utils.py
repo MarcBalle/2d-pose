@@ -41,7 +41,7 @@ def skeleton_coco_to_h36m(keypoints, scores, num_keypoint=17):
     return joint
 
 
-def show2Dpose(kps, img):
+def show2Dpose(img, kps, radius=4):
     if kps.size == 0:
         return img
     connections = [
@@ -75,7 +75,7 @@ def show2Dpose(kps, img):
         start = list(start)
         end = list(end)
         cv2.line(img, (start[0], start[1]), (end[0], end[1]), lcolor if LR[j] else rcolor, thickness)
-        cv2.circle(img, (start[0], start[1]), thickness=-1, color=(0, 255, 0), radius=3)
-        cv2.circle(img, (end[0], end[1]), thickness=-1, color=(0, 255, 0), radius=3)
+        cv2.circle(img, (start[0], start[1]), thickness=-1, color=(0, 255, 0), radius=radius)
+        cv2.circle(img, (end[0], end[1]), thickness=-1, color=(0, 255, 0), radius=radius)
 
     return img
