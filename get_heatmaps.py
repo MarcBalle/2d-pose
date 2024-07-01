@@ -1,3 +1,10 @@
+"""
+This script performs pose estimation on a video using the MMPose library. 
+The script processes each frame of the video, generates pose heatmaps, and saves them as images in an output directory. 
+The indices of the frames to be processed can be specified using an optional indices file. 
+The script utilizes the MMPoseInferencer class from the MMPose library for pose estimation.
+"""
+
 import argparse
 import os
 import pickle
