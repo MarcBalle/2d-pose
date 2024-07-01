@@ -3,5 +3,7 @@ configs
 videos
 weights
 outputs
+**indices**
+heatmaps
 **/__pycache__/
 presentation/
