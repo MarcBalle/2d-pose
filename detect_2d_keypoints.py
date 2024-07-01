@@ -50,37 +50,23 @@ if __name__ == "__main__":
 
     cap = cv2.VideoCapture(args.video)
     fps = cap.get(cv2.CAP_PROP_FPS)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    video_length = int(args.frames) if args.frames else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-
-    keypoints = np.zeros((video_length, 17, 2))
-
-    # Read first frame and perform inference
-    _, img = cap.read()
-    result_generator = inferencer(img, return_vis=True)
-    results = next(result_generator)
-    keypoints_coco = results["predictions"][0][0]["keypoints"]
-    scores_keypoints = results["predictions"][0][0]["keypoint_scores"]
-    coco_skeleton_image = results["visualization"][0]
-    keypoints_h36m = skeleton_coco_to_h36m(keypoints_coco, scores_keypoints)
-    h36m_skeleton_image = show2Dpose(keypoints_h36m, img)
-    if keypoints_h36m.size > 0:
-        keypoints[0] = keypoints_h36m
-
-    h, w = img.shape[:2]
-    size = (w, h)
     video_name, video_ext = os.path.splitext(os.path.split(args.video)[1])
     out = cv2.VideoWriter(
         os.path.join(args.output, video_name + ".2dkeypoints" + video_ext),
         cv2.VideoWriter_fourcc(*"DIVX"),
         fps,
-        size,
+        (width, height),
     )
-    out.write(h36m_skeleton_image)
 
     print("Performing inference...")
 
-    for i in tqdm(range(1, video_length)):
+    video_length = int(args.frames) if args.frames else int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    keypoints = np.zeros((video_length, 17, 2))
+
+    for i in tqdm(range(video_length)):
         # Image read in BGR order (required by mmdetections)
         _, img = cap.read()
 
