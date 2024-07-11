@@ -21,6 +21,7 @@ cap = cv2.VideoCapture(args.video)
 fps = cap.get(cv2.CAP_PROP_FPS)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+video_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
 video_name, video_ext = os.path.splitext(os.path.basename(args.video))
 out = cv2.VideoWriter(
@@ -31,10 +32,8 @@ out = cv2.VideoWriter(
 )
 
 print("Performing inference...")
-while cap.isOpened():
+for i in tqdm.tqdm(range(video_length)):
     ret, frame = cap.read()
-    if not ret:
-        break
 
     preds = model.detect_poses(tf.convert_to_tensor(frame), skeleton="h36m_17")
     pose = preds["poses2d"].numpy()
@@ -43,10 +42,6 @@ while cap.isOpened():
         frame = show2Dpose(frame, pose[0], radius=4)
 
     out.write(frame)
-
-    # Update progress bar
-    progress = cap.get(cv2.CAP_PROP_POS_FRAMES) / cap.get(cv2.CAP_PROP_FRAME_COUNT)
-    tqdm.tqdm.write(f"Progress: {progress * 100:.2f}%")
 
 cap.release()
 out.release()
